@@ -38,6 +38,16 @@ struct UsageProgressBar: View {
         min(100, max(0, self.percent))
     }
 
+    nonisolated static func shouldShowTrack(highlighted: Bool, percent: Double, pacePercent: Double?) -> Bool {
+        if highlighted == false {
+            return true
+        }
+        if min(100, max(0, percent)) > 0 {
+            return true
+        }
+        return UsageProgressBar.clampedPercent(pacePercent) > 0
+    }
+
     var body: some View {
         GeometryReader { proxy in
             let scale = max(self.displayScale, 1)
@@ -49,8 +59,14 @@ struct UsageProgressBar: View {
             let showTip = self.pacePercent != nil && tipWidth > 0.5
             let needsPunchCompositing = showTip
             let bar = ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(MenuHighlightStyle.progressTrack(self.isHighlighted))
+                if UsageProgressBar.shouldShowTrack(
+                    highlighted: self.isHighlighted,
+                    percent: self.percent,
+                    pacePercent: self.pacePercent)
+                {
+                    Capsule()
+                        .fill(MenuHighlightStyle.progressTrack(self.isHighlighted))
+                }
                 self.actualBar(width: fillWidth)
                 if showTip {
                     self.paceTip(width: tipWidth)
@@ -163,7 +179,7 @@ struct UsageProgressBar: View {
         return (punchedStripe, centerStripe)
     }
 
-    private static func clampedPercent(_ value: Double?) -> Double {
+    private nonisolated static func clampedPercent(_ value: Double?) -> Double {
         guard let value else { return 0 }
         return min(100, max(0, value))
     }
