@@ -1120,6 +1120,7 @@ extension UsageStore {
 extension UsageStore {
     nonisolated static func shouldRunOpenAIWebRefresh(_ context: OpenAIWebRefreshPolicyContext) -> Bool {
         guard context.accessEnabled else { return false }
+        if ProviderRefreshContext.current == .startup, !context.force { return false }
         return context.force || !context.batterySaverEnabled
     }
 

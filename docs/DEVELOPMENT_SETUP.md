@@ -66,7 +66,7 @@ source ~/.zshrc
 
 Now your builds will use the stable certificate, and keychain prompts will be much less frequent!
 
-> Note: `compile_and_run.sh` now auto-detects a valid signing identity (Developer ID or CodexBar Development).
+> Note: `compile_and_run.sh` now auto-detects a valid signing identity (Developer ID, CodexBar Development, or the first available Apple Development identity).
 > Set `APP_IDENTITY` to override the auto-detected choice.
 
 ---

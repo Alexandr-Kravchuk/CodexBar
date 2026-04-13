@@ -37,6 +37,17 @@ has_signing_identity() {
   security find-identity -p codesigning -v 2>/dev/null | grep -F "${identity}" >/dev/null 2>&1
 }
 
+find_signing_identity_by_prefix() {
+  local prefix="${1:-}"
+  if [[ -z "${prefix}" ]]; then
+    return 1
+  fi
+
+  security find-identity -p codesigning -v 2>/dev/null \
+    | sed -n "s/.*\"\(${prefix}[^\"]*\)\".*/\1/p" \
+    | head -n 1
+}
+
 resolve_signing_mode() {
   if [[ -n "${SIGNING_MODE}" ]]; then
     return
@@ -64,6 +75,14 @@ resolve_signing_mode() {
       return
     fi
   done
+
+  candidate="$(find_signing_identity_by_prefix "Apple Development:")"
+  if [[ -n "${candidate}" ]]; then
+    APP_IDENTITY="${candidate}"
+    export APP_IDENTITY
+    SIGNING_MODE="identity"
+    return
+  fi
 
   SIGNING_MODE="adhoc"
 }

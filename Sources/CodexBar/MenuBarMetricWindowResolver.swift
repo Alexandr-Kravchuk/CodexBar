@@ -108,6 +108,9 @@ enum MenuBarMetricWindowResolver {
                 secondary: snapshot.secondary,
                 tertiary: snapshot.tertiary)
         }
+        if let timedHierarchy = Self.mostConstrainedTimedHierarchyWindow(in: snapshot) {
+            return timedHierarchy
+        }
         return snapshot.primary ?? snapshot.secondary
     }
 
@@ -139,6 +142,14 @@ enum MenuBarMetricWindowResolver {
     {
         let windows = [primary, secondary, tertiary].compactMap(\.self)
         guard !windows.isEmpty else { return nil }
+        return windows.max(by: { $0.usedPercent < $1.usedPercent })
+    }
+
+    private static func mostConstrainedTimedHierarchyWindow(in snapshot: UsageSnapshot) -> RateWindow? {
+        let windows = [snapshot.primary, snapshot.secondary, snapshot.tertiary].compactMap(\.self)
+        let windowDurations = windows.compactMap(\.windowMinutes)
+        guard windows.count >= 2, windows.count == windowDurations.count else { return nil }
+        guard zip(windowDurations, windowDurations.dropFirst()).allSatisfy({ $0 < $1 }) else { return nil }
         return windows.max(by: { $0.usedPercent < $1.usedPercent })
     }
 }

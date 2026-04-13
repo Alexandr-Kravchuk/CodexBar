@@ -36,6 +36,7 @@ Usage source picker:
 - Enable it in Preferences -> Providers -> Codex -> OpenAI web extras.
 - It exists for dashboard-only extras such as code review remaining, usage breakdown, and credits history.
 - It is intentionally opt-in because it loads `chatgpt.com` in a hidden WebView and can materially increase battery or network usage.
+- Startup refresh skips automatic browser/app-data reads for this path to avoid immediate macOS privacy prompts at launch.
 - OpenAI web battery saver is a separate toggle. When enabled, routine background/settings-driven refreshes are reduced, but explicit manual refreshes still run.
 - OpenAI web battery saver currently defaults to off.
 - Preferences → Providers → Codex → OpenAI cookies (Automatic or Manual).

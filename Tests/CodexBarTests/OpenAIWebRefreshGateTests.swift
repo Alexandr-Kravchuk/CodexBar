@@ -1,3 +1,4 @@
+import CodexBarCore
 import Foundation
 import Testing
 @testable import CodexBar
@@ -31,6 +32,18 @@ struct OpenAIWebRefreshGateTests {
             force: true))
 
         #expect(shouldRun == true)
+    }
+
+    @Test("Startup refresh does not auto-open OpenAI web access")
+    func startupRefreshStaysOff() {
+        let shouldRun = ProviderRefreshContext.$current.withValue(.startup) {
+            UsageStore.shouldRunOpenAIWebRefresh(.init(
+                accessEnabled: true,
+                batterySaverEnabled: false,
+                force: false))
+        }
+
+        #expect(shouldRun == false)
     }
 
     @Test("Battery saver stale-submenu refresh respects the cooldown")
